@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from pygame import *
-import pygame, time, numpy, pygame.sndarray
 import sys
 import random
+import pygame, time, numpy
 from glob import glob
 
 sample_rate = 44100
@@ -34,6 +33,8 @@ class Player(object):
 
 
 def main():
+    import itertools
+
     pygame.mixer.pre_init(sample_rate, -16, 2) # 44.1kHz, 16-bit signed, stereo
     pygame.init()
     surface = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
@@ -41,9 +42,8 @@ def main():
     player = Player(surface)
 
     random.seed(0.5)
-    shuffler = glob("Samples/*/*.wav")
-    random.shuffle(shuffler)
-    shuffler = shuffler[:200]
+    sounds = glob("Samples/*Piano/*.wav")
+    sounds = list(itertools.islice(itertools.cycle(sounds), 200))
 
     while True:
         event = pygame.event.wait()
@@ -53,7 +53,7 @@ def main():
             if key == 99 and mod & pygame.KMOD_CTRL:
                 sys.exit()
 
-            sound = shuffler[key%200]
+            sound = sounds[key%200]
             player.play(sound)
         elif event.type == pygame.QUIT:
             sys.exit(0)
